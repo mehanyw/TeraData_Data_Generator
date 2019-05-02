@@ -8,13 +8,15 @@ class GeneratorForm extends Component {
     this.dataTypeChanged = this.dataTypeChanged.bind(this);
     this.numColsChanged = this.numColsChanged.bind(this);
     this.colOptionsChanged = this.colOptionsChanged.bind(this);
+    this.appendInput = this.appendInput.bind(this);
     this.generateData = this.generateData.bind(this);
     this.state = {
-      numRows: "",
-      fileType: "",
-      colTypeArray: [],
-      numColsArray: [],
-      colOptsArray: []
+      numRows: 0,
+      fileType: "CSV",
+      colTypeArray: ["integer"],
+      numColsArray: [0],
+      colOptsArray: [""],
+      idArray: ["0"]
     };
   }
 
@@ -36,7 +38,18 @@ class GeneratorForm extends Component {
     this.setState({ colOptsArray });
   }
 
+  appendInput() {
+    var newInput = `${this.state.idArray.length}`;
+    this.setState(prevState => ({
+      colTypeArray: prevState.colTypeArray.concat(["integer"]),
+      numColsArray: prevState.numColsArray.concat([0]),
+      colOptsArray: prevState.colOptsArray.concat([""]),
+      idArray: prevState.idArray.concat([newInput])
+    }));
+  }
+
   generateData(options) {
+    console.log(this.state);
     // TO DO: two possible options for implementation (TBD):
     //    (1) perform the data file export or (PROBABLY THIS OPTION)
     //    (2) send the options as a paramter to a function in app.py to export the data
@@ -55,12 +68,20 @@ class GeneratorForm extends Component {
             <Label>Number of Columns</Label>
           </Col>
         </Row>
-        <GeneratorColumnInput
-          id={0}
-          dataTypeChanged={this.dataTypeChanged}
-          numColsChanged={this.numColsChanged}
-          colOptionsChanged={this.colOptionsChanged}
-        />
+
+        {this.state.idArray.map(id => (
+          <GeneratorColumnInput
+            id={id}
+            key={id}
+            dataTypeChanged={this.dataTypeChanged}
+            numColsChanged={this.numColsChanged}
+            colOptionsChanged={this.colOptionsChanged}
+          />
+        ))}
+        <Button color="secondary" onClick={this.appendInput}>
+          Add Field
+        </Button>
+        <br />
         <br />
         <h5>Row & File Options</h5>
         <hr />
@@ -71,7 +92,10 @@ class GeneratorForm extends Component {
               type="number"
               name="numrows"
               id="numrows"
-              onChange={e => this.setState({ numRows: e.target.value })}
+              onChange={e => {
+                this.setState({ numRows: e.target.value });
+                console.log(this.state);
+              }}
             />
           </Col>
           <Col md={2}>
@@ -89,7 +113,7 @@ class GeneratorForm extends Component {
           </Col>
         </FormGroup>
         <hr />
-        <Button type="submit" color="success" onClick={this.generateData}>
+        <Button color="success" onClick={this.generateData}>
           Generate Data
         </Button>
       </Form>

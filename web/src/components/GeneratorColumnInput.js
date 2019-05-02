@@ -63,6 +63,7 @@ class GeneratorColumnInput extends Component {
             name="numcols"
             id={`numcols-${this.props.id}`}
             onChange={this.onNumColsChange}
+            placeholder="0"
           />
         </Col>
         <Col md={2}>
