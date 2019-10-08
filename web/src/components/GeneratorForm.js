@@ -48,11 +48,45 @@ class GeneratorForm extends Component {
     }));
   }
 
+  //TODO
+  download(data) {
+    const blob = new Blob([data], { type: 'text/csv' } );
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'data.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
   generateData(options) {
-    console.log(this.state);
-    // TO DO: two possible options for implementation (TBD):
-    //    (1) perform the data file export or (PROBABLY THIS OPTION)
-    //    (2) send the options as a paramter to a function in app.py to export the data
+    const csvRows = [];
+
+    // Push Headers to CSV
+    var headers = "";
+    var numCols = this.state.colTypeArray.length;
+    for (var i = 0; i < numCols; i++) {
+      headers = headers.concat(this.state.colTypeArray[i]);
+      if (i !== numCols-1)
+        headers = headers.concat(',');
+    }
+    csvRows.push(headers);
+    console.log(csvRows);
+    
+
+    // Output Cols to File
+    var low = 0;
+    var high = 100;
+    var numRows = this.state.numRows;
+    for (var j = 1; j <= numRows; j++) {
+      csvRows[j] = Math.floor((Math.random() * high) + low);
+      console.log('j: ', j);
+      console.log('number: ', csvRows[j]);
+    } 
+    console.log(csvRows);
+
+    this.download(csvRows);
   }
 
   render() {
